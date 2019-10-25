@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{{ goods.name }}{% endblock %}
+
+{% block main %}
+    <div class="breadcrumb">
+        <a href="{% url 'index' %}">首页</a>
+        <span>></span>
+        <a href="{% url 'list_first_page' goods.category_id %}">{{ goods.category.name }}</a>
+        <span>></span>
+        <a href="{% url 'detail' goods.id %}">商品详情</a>
+    </div>
+
+    <div class="goods_detail_con clearfix">
+        <div class="goods_detail_pic fl">
+            <img src="{{ MEDIA_URL }}{{ goods.picture }}" alt="">
+        </div>
+        <div class="goods_detail_list fr">
+            <h3>{{ goods.name }}</h3>
+            <p>{{ goods.desc }}</p>
+            <div class="prize_bar">
+                <span class="show_pirze">￥<em>{{ goods.price }}</em></span>
+                <span class="show_unit">单  位：{{ goods.unit }}</span>
+            </div>
+            <div class="goods_num clearfix">
+                <div class="num_name fl">数量:</div>
+                <div class="num_add fl">
+                    <input type="text" class="num_show fl" value="1" title="购买数量" data-id="{{ goods.id }}">
+                    <a href="javascript:;" class="add fr">+</a>
+                    <a href="javascript:;" class="minus fr">-</a>
+                </div>
+            </div>
+            <div class="total">总价：<em class="total1" id="sum">{{ goods.price }}元</em></div>
+            <div class="operate_btn">
+                <a href="javascript:;" class="buy_btn">立即购买</a>
+                <a href="{% url 'add_to_cart' %}?goods_id={{ goods.id }}&number={{ 1 }}" class="add_cart " id="add_cart"
+                   target="_blank">加入购物车</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main_wrap clearfix">
+        <div class="l_wrap fl clearfix">
+            <div class="new_goods">
+                <h3>新品推荐</h3>
+                <ul>
+                    <li>
+                        <a href="#"><img src="{% static '/images/goods/goods001.jpg' %}" alt=""></a>
+                        <h4><a href="#">进口柠檬</a></h4>
+                        <div class="prize">￥3.90</div>
+                    </li>
+                    <li>
+                        <a href="#"><img src="{% static '/images/goods/goods002.jpg' %}" alt=""></a>
+                        <h4><a href="#">玫瑰香葡萄</a></h4>
+                        <div class="prize">￥16.80</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="r_wrap fr clearfix">
+            <ul class="detail_tab clearfix">
+                <li class="active">商品介绍</li>
+                <li>评论</li>
+            </ul>
+
+            <div class="tab_content">
+                <dl>
+                    <dt>商品详情：</dt>
+                    <dd>{{ goods.detail }}</dd>
+                </dl>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+
+
+        $('.add').click(function () {
+            $('.num_show').val(function (i, v) {
+                return parseInt(v) + 1
+            });
+            total()
+            $('#add_cart').attr('href', '{% url 'add_to_cart'%}' + '?goods_id=' + $('.num_show').attr('data-id') + '&number=' + $('.num_show').val());
+        });
+
+        $('.minus').click(function () {
+            $('.num_show').val(function (i, v) {
+                if (v > 1) {
+                    return parseInt(v) - 1
+                }
+                return v
+            });
+            total()
+            $('#add_cart').attr('href', '{% url 'add_to_cart'%}' + '?goods_id=' + $('.num_show').attr('data-id') + '&number=' + $('.num_show').val());
+        });
+
+        $('.num_show').on('input', function () {
+            if (!/^\d+$/.test($(this).val())) {
+                $(this).val(1)
+            }
+            $('#add_cart').attr('href', '{% url 'add_to_cart'%}' + '?goods_id=' + $('.num_show').attr('data-id') + '&number=' + $('.num_show').val());
+
+        });
+
+        var price = parseFloat($('.total1').html())
+
+        function total() {
+            var count = parseInt($('.num_show').val())
+            sum = price * count
+            $('#sum').html((sum) + '元')
+
+
+        }
+    </script>
+
+{% endblock %}
+	

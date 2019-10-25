@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}商品列表{% endblock %}
+
+{% block main %}
+    <div class="breadcrumb">
+        <a href="{% url 'index' %}">首页</a>
+        <span> 》</span>
+        <a href="{% url 'list_first_page' current_category.id %}">{{ current_category.name }}</a>
+    </div>
+
+    <div class="main_wrap clearfix">
+        <div class="l_wrap fl clearfix">
+            <div class="new_goods">
+                <h3>新品推荐</h3>
+                <ul>
+                    <li>
+                        <a href="#"><img src="{% static '/images/goods/goods001.jpg' %}"></a>
+                        <h4><a href="#">进口柠檬</a></h4>
+                        <div class="prize">￥3.90</div>
+                    </li>
+                    <li>
+                        <a href="#"><img src="{% static '/images/goods/goods002.jpg' %}"></a>
+                        <h4><a href="#">玫瑰香葡萄</a></h4>
+                        <div class="prize">￥16.80</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="r_wrap fr clearfix">
+            <div class="sort_bar">
+                <a href="#" class="active">默认</a>
+                <a href="#">价格</a>
+                <a href="#">人气</a>
+            </div>
+
+            <ul class="goods_type_list clearfix">
+                {% for goods in page.object_list %}
+                    <li>
+                        <a href="{% url 'detail' goods.id %}">
+                            <img src="{{ MEDIA_URL }}{{ goods.picture }}" alt="">
+                        </a>
+                        <h4><a href="{% url 'detail' goods.id %}">{{ goods.name }}</a></h4>
+                        <div class="operate">
+                            <span class="prize">￥{{ goods.price }}</span>
+                            <span class="unit">{{ goods.price }}/{{ goods.unit }}</span>
+                            <a href='' class="" title="加入购物车"></a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="pagenation">
+                {% if page.has_previous %}
+                    <a href="{% url 'list' current_category.id page.previous_page_number %}">上一页</a>
+                {% endif %}
+                {% for p in page.paginator.page_range %}
+                    <a href="{% url 'list' current_category.id p %}"
+                            {% ifequal page.number p %} class="active" {% endifequal %}>{{ p }}</a>
+                {% endfor %}
+                {% if page.has_next %}
+                    <a href="{% url 'list' current_category.id page.next_page_number %}">下一页</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

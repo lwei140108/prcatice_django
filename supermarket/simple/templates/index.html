@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}天天生鲜-首页{% endblock %}
+
+{% block style %}
+    <style>
+        .swiper-container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block navbar %}
+    <div class="navbar_con">
+        <div class="navbar">
+            <h1 class="fl">全部商品分类</h1>
+            <ul class="navlist fl">
+                <li><a href="">首页</a></li>
+                <li class="interval">|</li>
+                <li><a href="">手机生鲜</a></li>
+                <li class="interval">|</li>
+                <li><a href="">抽奖</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="center_con clearfix">
+        <ul class="subnav fl">
+            {% for category in categories %}
+                <li><a href="{% url 'list_first_page' category.id %}"
+                       class="{{ category.icon_class }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        <div class="slide fl">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="{% static 'images/slide.jpg' %}" alt="幻灯片">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="{% static 'images/slide02.jpg' %}" alt="幻灯片">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="{% static 'images/slide03.jpg' %}" alt="幻灯片">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="{% static 'images/slide04.jpg' %}" alt="幻灯片">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+
+        <div class="adv fl">
+            <a href="#"><img src="{% static '/images/adv01.jpg' %}" alt="广告1"></a>
+            <a href="#"><img src="{% static '/images/adv02.jpg' %}" alt="广告2"></a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    {% for category in categories %}
+        <div class="list_model">
+            <div class="list_title clearfix">
+                <h3 class="fl" id="model01">{{ category.name }}</h3>
+                <div class="subtitle f1">
+                    <span>|</span>
+                    <a href="#">鲜芒</a>
+                    <a href="#">加州提子</a>
+                    <a href="#">亚马逊牛油果</a>
+                    <a href="{% url 'list_first_page' category.id %}" class="goods_more fr" id="fruit_more">查看更多</a>
+                </div>
+            </div>
+
+            <div class="goods_con clearfix">
+                <div class="goods_banner fl"><img src="{{ MEDIA_URL }}{{ category.banner }}" alt=""></div>
+                <ul class="goods_list fl">
+                    {% for goods in category.goods_set.all|slice:":4" %}
+                        <li>
+                            <h4><a href="{% url 'detail' goods.id %}">{{ goods.name }}</a></h4>
+                            <a href="{% url 'detail' goods.id %}"><img src="{{ MEDIA_URL }}{{ goods.picture }}"
+                                                                       alt="商品"></a>
+                            <div class="prize">￥ {{ goods.price }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <script>
+        window.onload = function () {
+            var mySwiper = new Swiper('.swiper-container', {
+                direction: 'horizontal', // 垂直切换选项
+                loop: true, // 循环模式选项
+
+                // 如果需要分页器
+                pagination: {
+                    el: '.swiper-pagination',
+                },
+
+                // 如果需要前进后退按钮
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            })
+        }
+    </script>
+{% endblock %}
+

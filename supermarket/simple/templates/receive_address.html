@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static shopping %}
+
+{% block title %}收货地址{% endblock %}
+
+{% block main %}
+    <div>
+          <form id="addressForm" action="{% url 'create_receive_address' %}" method="post">
+            {% csrf_token %}
+            <div>
+              <label for="">区域</label>
+              <input type="text" name="region">
+            </div>
+            <div>
+              <label for="">收货人</label>
+              <input type="text" name="name">
+            </div>
+            <div>
+              <label for="">详细地址</label>
+              <input type="text" name="detail">
+            </div>
+            <div>
+              <label for="">电话</label>
+              <input type="text" name="tel">
+            </div>
+            <button type="submit">添加</button>
+          </form>
+        </div>
+{% endblock %}

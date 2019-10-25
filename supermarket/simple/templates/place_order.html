@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% load static shopping %}
+
+{% block title %}提交订单{% endblock %}
+{% block main %}
+
+    <h3 class="common_title">确认收货地址</h3>
+
+    <div class="common_list_con clearfix">
+        <dl>
+            <dt>寄送到：</dt>
+
+            {#                <dd><input class="rec-address" type="radio" name="recaddr" checked="checked" value="{{ address.id }}">#}
+            {#                    {{ recver.region }}{{ recver.detail }}（{{ recver.name }} 收）{{ recver.tel }}#}
+            {#                </dd>#}
+            {% for address in user.receiveaddress_set.all %}
+                <dd><input class="rec-address" type="radio" name="recaddr" checked="checked"
+                           value="{{ address.id }}">
+                    {{ address.region }}{{ address.detail }}（{{ address.name }} 收）{{ address.tel }}
+                </dd>
+            {% endfor %}
+
+        </dl>
+        <a href="{% url 'user_center_site' %}" class="edit_site">编辑收货地址</a>
+    </div>
+
+    <h3 class="common_title">支付方式</h3>
+    <div class="common_list_con clearfix">
+        <div class="pay_style_con clearfix">
+            <input type="radio" name="pay_style" checked="checked">
+            <label class="cash">货到付款</label>
+            <input type="radio" name="pay_style">
+            <label class="weixin">微信支付</label>
+            <input type="radio" name="pay_style">
+            <label class="zhifubao"></label>
+            <input type="radio" name="pay_style">
+            <label class="bank">银行卡支付</label>
+        </div>
+    </div>
+
+    <h3 class="common_title">商品列表</h3>
+
+    <div class="common_list_con clearfix">
+        <ul class="goods_list_th clearfix">
+            <li class="col01">商品名称</li>
+            <li class="col02">商品单位</li>
+            <li class="col03">商品价格</li>
+            <li class="col04">数量</li>
+            <li class="col05">小计</li>
+        </ul>
+        {% for cart in carts %}
+            <ul class="goods_list_td clearfix">
+                <input type="hidden" value="{{ cart.id }}" class="cart-id">
+                <li class="col01">{{ forloop.counter }}</li>
+                <li class="col02"><img src="{% get_media_prefix %}{{ cart.goods.picture }}"></li>
+                <li class="col03">{{ cart.goods.name }}</li>
+                <li class="col04">{{ cart.goods.unit }}</li>
+                <li class="col05">{{ cart.goods.price }}元</li>
+                <li class="col06">{{ cart.number }}</li>
+                {% multiply cart.goods.price cart.number as subtotal %}
+                <li class="col07">{{ subtotal }}元</li>
+            </ul>
+        {% endfor %}
+    </div>
+
+    <h3 class="common_title">总金额结算</h3>
+
+    <div class="common_list_con clearfix">
+        <div class="settle_con">
+            <div class="total_goods_count">共<em>{{ count }}</em>件商品，总金额<b>{{ total }}元</b></div>
+            <div class="transit">运费：<b>0元</b></div>
+            <div class="total_pay">实付款：<b id="amount">{{ total }}</b>元</div>
+        </div>
+    </div>
+
+    <div class="order_submit clearfix">
+        <a id="order_btn">提交订单</a>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+
+    <script>
+
+        $('#order_btn').click(function () {
+
+            let cart_ids = [];
+            $('.cart-id').each(function (i, el) {
+                cart_ids.push($(el).val());
+            });
+            console.log(cart_ids);
+            $.ajax({
+                url: '{% url "create_order" %}',
+                type: 'post',
+                headers: {
+                    'X-CSRFTOKEN': $.cookie('csrftoken')
+                },
+                dataType: 'json',
+                data: {
+                    'address_id': $('.rec-address:checked').val(),
+                    'cart_ids': JSON.stringify(cart_ids),
+                    'amount': $('#amount').html(),
+                },
+                    success: function (res) {
+                        if (res.success) {
+                            window.location.href="{% url 'user_center_order' %}"
+                        } else {
+                            alert('失败')
+                        }
+                    }
+
+
+            })
+        })
+
+
+    </script>
+{% endblock %}
