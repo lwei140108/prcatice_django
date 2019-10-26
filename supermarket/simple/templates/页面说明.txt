@@ -17,7 +17,7 @@
 6、login.html 登录页面
 
 
-7、register.html 注册页面，已加入了初步的表单验证效果，此效果在课程中已讲述如何制作。
+7、register.html 注册页面，已加入了初步的表单验证效果。
 
 
 8、user_center_info.html 用户中心-用户信息页 用户中心功能一，查看用户的基本信息
